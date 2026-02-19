@@ -1,7 +1,7 @@
 .wrapper {
   display: flex;
   justify-content: center;
-  padding: var(--spacing-lg) var(--grid-margin) var(--spacing-md);
+  padding: var(--spacing-sm) var(--grid-margin) var(--spacing-sm);
   flex-shrink: 0;
 }
 

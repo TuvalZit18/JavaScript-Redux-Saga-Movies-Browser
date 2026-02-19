@@ -1,5 +1,5 @@
-import React from 'react'
-import styles from './Header.module.css'
+import React from "react";
+import styles from "./Header.module.css";
 
 // ─────────────────────────────────────────────
 // Header — App title bar
@@ -9,15 +9,15 @@ const Header = () => {
     <header className={styles.header}>
       <div className={styles.inner}>
         <div className={styles.logo}>
-          <span className={styles.logoIcon}>◈</span>
+          <span className={styles.logoIcon}>✡</span>
           <span className={styles.logoText}>
-            Cine<span className={styles.logoAccent}>Verse</span>
+            Zman <span className={styles.logoAccent}>Masach</span>
           </span>
         </div>
         <p className={styles.tagline}>Discover your next favorite film</p>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

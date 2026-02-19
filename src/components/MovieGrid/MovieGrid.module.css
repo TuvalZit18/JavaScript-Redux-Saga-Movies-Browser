@@ -6,7 +6,7 @@
   ); /* minmax(0,1fr) forces equal columns */
   grid-auto-rows: max-content;
   gap: var(--grid-gap);
-  padding: var(--spacing-lg) var(--grid-margin);
+  padding: var(--spacing-sm) var(--grid-margin);
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;

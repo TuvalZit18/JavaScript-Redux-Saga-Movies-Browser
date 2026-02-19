@@ -53,8 +53,8 @@
   --transition-base: 0.25s ease;
   --transition-slow: 0.4s ease;
 
-  --header-height: 72px;
-  --footer-height: 80px;
+  --header-height: 40px;
+  --footer-height: 52px;
   --grid-gap: 20px;
   --grid-margin: 48px;
   --cards-per-row: 4;

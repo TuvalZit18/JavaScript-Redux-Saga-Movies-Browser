@@ -2,12 +2,15 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   min-height: 0;
+  overflow: hidden;
 }
 
 .gridArea {
   flex: 1;
-  overflow-x: hidden;
   min-height: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-padding-top: 20px;
+  scroll-padding-bottom: 20px;
 }

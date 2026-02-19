@@ -1,18 +1,27 @@
-# 🎬 CineVerse — Movie Browser
+# 🎬 Zman Masach — Movie Browser
 
-A modern movie browsing app built with React, Redux-Saga, and the TMDB API.
+# Movie Database Application
+
+A modern, accessible movie browsing application built with React, Redux, and Redux-Saga. Features complete keyboard navigation, debounced search, rate limiting, and persistent favorites.
+
+![React](https://img.shields.io/badge/React-18.x-blue)
+![Redux](https://img.shields.io/badge/Redux-5.x-purple)
+![Redux-Saga](https://img.shields.io/badge/Redux--Saga-1.x-green)
+![Vite](https://img.shields.io/badge/Vite-5.x-yellow)
 
 ---
 
 ## 🚀 Getting Started
 
 ### 1. Clone the repository
+
 ```bash
 git clone <your-repo-url>
 cd movie-browser
 ```
 
 ### 2. Install dependencies
+
 ```bash
 npm install
 ```
@@ -20,11 +29,13 @@ npm install
 ### 3. Set up your API key
 
 Create a `.env` file in the root of the project:
+
 ```bash
 cp .env.example .env
 ```
 
 Then open `.env` and replace the placeholder with your real TMDB API key:
+
 ```
 VITE_TMDB_API_KEY=your_actual_api_key_here
 ```
@@ -32,6 +43,7 @@ VITE_TMDB_API_KEY=your_actual_api_key_here
 > Get a free API key at: https://www.themoviedb.org/settings/api
 
 ### 4. Start the development server
+
 ```bash
 npm run dev
 ```
@@ -42,12 +54,12 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## 🎮 Keyboard Navigation
 
-| Key          | Action                          |
-|--------------|---------------------------------|
-| `Arrow Keys` | Navigate between movie cards    |
-| `Enter`      | Open focused movie details      |
-| `Escape`     | Go back from detail page        |
-| `Tab`        | Disabled (no action)            |
+| Key          | Action                       |
+| ------------ | ---------------------------- |
+| `Arrow Keys` | Navigate between movie cards |
+| `Enter`      | Open focused movie details   |
+| `Escape`     | Go back from detail page     |
+| `Tab`        | Disabled (no action)         |
 
 > Mouse scrolling is disabled. Use keyboard arrows to navigate the grid.
 

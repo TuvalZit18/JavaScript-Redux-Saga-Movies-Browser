@@ -12,7 +12,10 @@ const Footer = () => {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.left}>
-          <span className={styles.brand}>◈ CineVerse</span>
+          <span className={styles.logoIcon}>✡</span>
+          <span className={styles.logoText}>
+            Zman <span className={styles.logoAccent}>Masach</span>
+          </span>
           <span className={styles.separator}>·</span>
           <span className={styles.credit}>
             Built by <strong>Tuval ZItelbach</strong>

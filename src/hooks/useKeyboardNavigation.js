@@ -44,7 +44,7 @@ const useKeyboardNavigation = ({
     (index) => {
       if (gridRef?.current) {
         const cards = gridRef.current.querySelectorAll("[data-card]");
-        cards[index]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        cards[index]?.scrollIntoView({ block: "center", behavior: "smooth" });
       }
     },
     [gridRef],

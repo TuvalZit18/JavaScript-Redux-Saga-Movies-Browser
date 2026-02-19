@@ -13,14 +13,21 @@ const MovieDetailPage = lazy(
 // ─────────────────────────────────────────────────────────────────────────────
 // App — root layout, routing, focus context owner
 //
-// focusContext: 'search' | 'tabs' | 'grid' | 'pagination'
-//
-// contextSwitchedAt: timestamp of last context switch.
-// Passed to all context-aware components so they can guard against
-// queued keypresses bleeding in right after a context switch.
-// The KEY that caused the switch fires normally — only the NEW context
-// is locked for CONTEXT_SWITCH_COOLDOWN_MS after becoming active.
+// Layout: flex column, full height
+//   Header (fixed height)
+//   Main area (flex: 1, scrollable inside)
+//     SearchBar + FilterTabs + HomePage (on /)
+//     MovieDetailPage (on /movie/:id)
+//   Footer (fixed height)
 // ─────────────────────────────────────────────────────────────────────────────
+
+const pageStyle = {
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  minHeight: 0,
+  overflow: "hidden",
+};
 
 const PageLoader = () => (
   <div
@@ -48,21 +55,27 @@ const App = () => {
   const [focusContext, setFocusContextRaw] = useState("tabs");
   const contextSwitchedAt = useRef(Date.now());
 
-  // Wrap setFocusContext to always record the switch timestamp
   const setFocusContext = useCallback((newContext) => {
     contextSwitchedAt.current = Date.now();
     setFocusContextRaw(newContext);
   }, []);
 
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
       <Header />
 
       <Routes>
         <Route
           path="/"
           element={
-            <>
+            <div style={pageStyle}>
               <SearchBar
                 focusContext={focusContext}
                 setFocusContext={setFocusContext}
@@ -80,22 +93,24 @@ const App = () => {
                   contextSwitchedAt={contextSwitchedAt}
                 />
               </Suspense>
-            </>
+            </div>
           }
         />
 
         <Route
           path="/movie/:id"
           element={
-            <Suspense fallback={<PageLoader />}>
-              <MovieDetailPage />
-            </Suspense>
+            <div style={pageStyle}>
+              <Suspense fallback={<PageLoader />}>
+                <MovieDetailPage />
+              </Suspense>
+            </div>
           }
         />
       </Routes>
 
       <Footer />
-    </>
+    </div>
   );
 };
 

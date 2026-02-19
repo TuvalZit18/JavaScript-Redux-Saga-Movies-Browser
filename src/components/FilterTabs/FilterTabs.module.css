@@ -1,7 +1,7 @@
 .nav {
   display: flex;
   justify-content: center;
-  padding: var(--spacing-sm) var(--grid-margin);
+  padding: var(--spacing-xs) var(--grid-margin);
   flex-shrink: 0;
 }
 
@@ -70,7 +70,7 @@
 /* ─── Sliding bubble indicator ─── */
 .slider {
   position: absolute;
-  top: 12px;
+  top: 13px;
   height: calc(100% - 12px);
   border-radius: var(--radius-pill);
   background: linear-gradient(135deg, #00d4ff 0%, #0080ff 100%);
