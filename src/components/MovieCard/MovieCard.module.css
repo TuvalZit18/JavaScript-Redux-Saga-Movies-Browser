@@ -1,0 +1,177 @@
+.card {
+  position: relative;
+  background: var(--gradient-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  /* No overflow:hidden here — would clip tooltips */
+  cursor: pointer;
+  transition:
+    transform var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Fill the grid column exactly */
+  min-width: 0; /* Prevent overflow */
+}
+
+.card:hover,
+.card.focused {
+  border-color: var(--color-border-active);
+  box-shadow: var(--glow-md), var(--shadow-card);
+  transform: scale(1.04);
+  z-index: 2;
+}
+
+/* ─── Poster — overflow hidden scoped here only ─── */
+.posterWrapper {
+  position: relative;
+  overflow: hidden;
+  background: #030d1e;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  flex-shrink: 0; /* Never compress the poster */
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Fills the fixed container, crops if needed */
+  object-position: center; /* Always center the crop */
+  display: block;
+  transition: transform var(--transition-slow);
+}
+
+.card:hover .poster,
+.card.focused .poster {
+  transform: scale(1.04);
+}
+
+/* ─── Action Buttons
+     Positioned absolutely on the card (not inside posterWrapper)
+     so the tooltip can escape upward without being clipped ─── */
+.actions {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base);
+  z-index: 10;
+}
+
+.card:hover .actions,
+.card.focused .actions,
+.actionsVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.actionBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(2, 11, 24, 0.85);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  backdrop-filter: blur(8px);
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.actionBtn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  box-shadow: var(--glow-sm);
+  background: rgba(0, 212, 255, 0.12);
+}
+
+.actionBtn.favorited {
+  color: #ff4d6d;
+  border-color: rgba(255, 77, 109, 0.5);
+  background: rgba(255, 77, 109, 0.1);
+}
+
+.actionBtn.favorited:hover {
+  box-shadow: 0 0 8px rgba(255, 77, 109, 0.5);
+}
+
+/* ─── Tooltip — floats above the button, z-index above everything ─── */
+.actionBtn::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(2, 11, 24, 0.95);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: 999;
+}
+
+.actionBtn:hover::after {
+  opacity: 1;
+}
+
+/* ─── Info Section ─── */
+.info {
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+}
+
+.title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.star {
+  color: #ffd700;
+  font-size: 0.7rem;
+}
+
+.divider {
+  color: var(--color-text-muted);
+}
+
+.year {
+  color: var(--color-text-secondary);
+}

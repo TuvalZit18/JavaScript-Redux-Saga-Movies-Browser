@@ -1,0 +1,13 @@
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.gridArea {
+  flex: 1;
+  overflow-x: hidden;
+  min-height: 0;
+}

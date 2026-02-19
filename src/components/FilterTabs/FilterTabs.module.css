@@ -1,0 +1,99 @@
+.nav {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--grid-margin);
+  flex-shrink: 0;
+}
+
+/* ─── Outer container — dark pill bar ─── */
+.tabsContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #061428;
+  border: 1px solid #0a2a4a;
+  border-radius: var(--radius-pill);
+  padding: 6px;
+  gap: var(--spacing-xs);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  overflow: visible;
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+/* Section glow — visible when tabs context is active */
+.tabsContainer.sectionActive {
+  border-color: rgba(0, 212, 255, 0.45);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(0, 212, 255, 0.2),
+    var(--glow-sm);
+}
+
+/* ─── Each tab button ─── */
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 10px var(--spacing-xl);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  z-index: 1;
+  transition: color var(--transition-base);
+  border: none;
+  outline: none;
+}
+
+.tab:hover:not(.active) {
+  color: var(--color-text-primary);
+}
+
+.tab.active {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* Keyboard highlighted tab (not yet confirmed) */
+.highlighted {
+  color: var(--color-accent);
+  background: rgba(0, 212, 255, 0.08);
+  border-radius: var(--radius-pill);
+}
+
+/* ─── Sliding bubble indicator ─── */
+.slider {
+  position: absolute;
+  top: 12px;
+  height: calc(100% - 12px);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, #00d4ff 0%, #0080ff 100%);
+  box-shadow:
+    0 0 16px rgba(0, 212, 255, 0.6),
+    0 0 32px rgba(0, 128, 255, 0.3),
+    0 -8px 24px rgba(0, 212, 255, 0.4);
+  transition:
+    left var(--transition-base),
+    width var(--transition-base);
+  z-index: 0;
+  transform: scaleY(1.15) translateY(-4px);
+  transform-origin: bottom center;
+}
+
+.tabIcon {
+  font-size: 1rem;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.tabLabel {
+  position: relative;
+  z-index: 2;
+}

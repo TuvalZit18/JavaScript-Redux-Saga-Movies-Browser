@@ -1,0 +1,96 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-lg) var(--grid-margin) var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 55%;
+  min-width: 320px;
+  max-width: 680px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-pill);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+  overflow: hidden;
+}
+
+/* Regular browser focus */
+.container:focus-within {
+  border-color: var(--color-border-active);
+  box-shadow:
+    var(--glow-sm),
+    0 0 20px rgba(0, 170, 255, 0.15);
+}
+
+/* Section active glow — when focusContext === 'search' */
+.container.focused {
+  border-color: var(--color-border-active);
+  box-shadow:
+    var(--glow-sm),
+    0 0 20px rgba(0, 170, 255, 0.15);
+}
+
+/* Section glow ring around the entire search bar */
+.container.sectionActive {
+  border-color: rgba(0, 212, 255, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(0, 212, 255, 0.2),
+    var(--glow-sm);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: var(--spacing-lg);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  transition: color var(--transition-base);
+}
+
+.container:focus-within .icon,
+.container.focused .icon,
+.container.sectionActive .icon {
+  color: var(--color-accent);
+}
+
+.input {
+  flex: 1;
+  padding: var(--spacing-md) var(--spacing-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background: transparent;
+  caret-color: var(--color-accent);
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-right: var(--spacing-sm);
+  border-radius: 50%;
+  color: var(--color-text-secondary);
+  background: rgba(0, 212, 255, 0.08);
+  flex-shrink: 0;
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.clearButton:hover {
+  color: var(--color-accent);
+  background: rgba(0, 212, 255, 0.16);
+}

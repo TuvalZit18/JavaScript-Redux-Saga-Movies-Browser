@@ -1,0 +1,106 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(
+    4,
+    minmax(0, 1fr)
+  ); /* minmax(0,1fr) forces equal columns */
+  grid-auto-rows: max-content;
+  gap: var(--grid-gap);
+  padding: var(--spacing-lg) var(--grid-margin);
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  align-items: start;
+  overflow: visible;
+}
+
+/* Each grid cell wrapper — must not overflow its column */
+.grid > * {
+  min-width: 0;
+  width: 100%;
+}
+
+/* ─── State containers (loading/empty/error) ─── */
+.stateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-2xl);
+  width: 100%;
+  min-height: 300px;
+  grid-column: 1 / -1; /* Span full width */
+}
+
+.stateIcon {
+  font-size: 3rem;
+  filter: grayscale(0.3);
+}
+
+.stateText {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  text-align: center;
+  font-weight: 500;
+}
+
+.stateSubtext {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ─── Skeleton Loading Cards ─── */
+.skeleton {
+  background: var(--gradient-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  animation: skeletonPulse 1.8s ease-in-out infinite;
+}
+
+.skeletonPoster {
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(90deg, #061428 25%, #0a2040 50%, #061428 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.skeletonInfo {
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.skeletonLine {
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, #0a2040 25%, #0f2e56 50%, #0a2040 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.skeletonLineShort {
+  width: 60%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes skeletonPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}

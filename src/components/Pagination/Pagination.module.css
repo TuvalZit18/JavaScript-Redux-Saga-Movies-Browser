@@ -1,0 +1,90 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md) var(--grid-margin);
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  transition: box-shadow var(--transition-base);
+}
+
+/* Section glow — visible when pagination context is active */
+.pagination.sectionActive {
+  box-shadow:
+    0 0 0 1px rgba(0, 212, 255, 0.2),
+    var(--glow-sm);
+  background: rgba(0, 212, 255, 0.03);
+}
+
+.pageBtn,
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  cursor: pointer;
+}
+
+.pageBtn:hover:not(.active),
+.arrow:hover:not(.disabled) {
+  color: var(--color-accent);
+  border-color: var(--color-border-subtle);
+  background: rgba(0, 212, 255, 0.06);
+}
+
+.pageBtn.active {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent) 0%,
+    var(--color-accent-secondary) 100%
+  );
+  color: var(--color-bg);
+  font-weight: 700;
+  border-color: var(--color-accent);
+  box-shadow: var(--glow-sm);
+}
+
+/* Keyboard highlighted page (navigating, not yet confirmed) */
+.pageBtn.highlighted {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.arrow {
+  font-size: 1.4rem;
+  font-weight: 300;
+  padding: 0 var(--spacing-sm);
+  min-width: 40px;
+  color: var(--color-accent);
+}
+
+.arrow.disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ellipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  user-select: none;
+}

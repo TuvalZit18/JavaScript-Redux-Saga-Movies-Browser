@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" fill="none">
+  <rect width="200" height="300" fill="#061428"/>
+  <rect x="1" y="1" width="198" height="298" rx="4" stroke="#0a3a5a" stroke-width="1"/>
+  <!-- Film strip holes top -->
+  <rect x="20" y="12" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="46" y="12" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="72" y="12" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="98" y="12" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="124" y="12" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="150" y="12" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <!-- Film strip holes bottom -->
+  <rect x="20" y="278" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="46" y="278" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="72" y="278" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="98" y="278" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="124" y="278" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <rect x="150" y="278" width="16" height="10" rx="2" fill="#0a2a4a"/>
+  <!-- Camera icon -->
+  <path d="M70 130 L70 170 L130 170 L130 130 Z" stroke="#0a3a5a" stroke-width="2" fill="#0a1f3a"/>
+  <circle cx="100" cy="150" r="12" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <circle cx="100" cy="150" r="6" fill="#00d4ff" opacity="0.3"/>
+  <rect x="115" y="124" width="12" height="8" rx="2" fill="#0a3a5a"/>
+  <!-- No image text -->
+  <text x="100" y="200" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#3a6a8a">No Image</text>
+</svg>
