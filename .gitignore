@@ -1,3 +1,6 @@
+# .gitignore — files and folders excluded from Git version control
+# These are never committed to the repository.
+
 # Dependencies
 node_modules/
 
