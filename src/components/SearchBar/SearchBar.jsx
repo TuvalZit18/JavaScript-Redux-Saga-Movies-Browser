@@ -9,37 +9,54 @@ import {
 import styles from "./SearchBar.module.css";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SearchBar
-//
-// Keyboard context (focusContext === 'search'):
-//   Escape    → clear + go to tabs context
-//   ArrowDown → go to tabs context
-//   (all other keys type normally)
-//
-// Guard: ignores keypresses for COOLDOWN_MS after becoming active context
-// to prevent queued keypresses bleeding in from previous context.
-// The key that triggered the context switch is NOT blocked — only keys
-// arriving after the switch are guarded.
+/**
+ * SearchBar
+ *
+ * Keyboard context (focusContext === 'search'):
+ *   Escape    → clear search + go to tabs context
+ *   ArrowDown → go to tabs context
+ *   (all other keys type normally in the input)
+ *
+ * Guard: ignores keypresses for COOLDOWN_MS after becoming active context
+ * to prevent queued keypresses bleeding in from previous context.
+ * The key that triggered the context switch is NOT blocked — only keys
+ * arriving after the switch are guarded.
+ *
+ * @param {string}          focusContext       - Current active keyboard context
+ * @param {Function}        setFocusContext    - Switches the active keyboard context
+ * @param {React.RefObject} contextSwitchedAt  - Timestamp of last context switch (for cooldown guard)
+ */
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Minimum query length before an API search request is dispatched.
+// Matches the same constant in moviesSaga.js and HomePage.jsx — single source of truth per file.
 const MIN_SEARCH_LENGTH = 2;
+
+// Cooldown window after a context switch during which keypresses are ignored.
+// Prevents queued keypresses from the previous context bleeding into this one.
+// Must match COOLDOWN_MS across all context-aware components (FilterTabs, MovieGrid, Pagination).
 const COOLDOWN_MS = 300;
 
 const SearchBar = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
   const dispatch = useDispatch();
   const activeTab = useSelector((state) => state.movies.activeTab);
+
+  // On Favorites tab: read local filter query (no API)
+  // On other tabs: read the API search query
   const searchQuery = useSelector((state) =>
     activeTab === "favorites"
       ? state.movies.favoritesSearchQuery
       : state.movies.searchQuery,
   );
-
+  // useRef — holds the debounce timer ID without triggering re-renders on change
   const debounceRef = useRef(null);
   const inputRef = useRef(null);
   const isFavoritesTab = activeTab === "favorites";
   const isActive = focusContext === "search";
 
-  // Focus/blur the input when context changes
+  // Programmatically focus/blur the input when focusContext changes.
+  // This syncs the visual focus state with the keyboard context system —
+  // when another section becomes active, the input loses focus automatically.
   useEffect(() => {
     if (isActive) {
       inputRef.current?.focus();
@@ -48,10 +65,21 @@ const SearchBar = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
     }
   }, [isActive]);
 
+  /**
+   * Returns true if enough time has passed since the last context switch.
+   * Prevents queued keypresses from the previous context bleeding into the search input.
+   * @returns {boolean}
+   */
   const isReady = useCallback(() => {
     return Date.now() - contextSwitchedAt.current > COOLDOWN_MS;
   }, [contextSwitchedAt]);
 
+  /**
+   * Handles input value changes.
+   * Favorites tab → dispatches local filter query only, no API call.
+   * Other tabs    → dispatches API search with 500ms debounce.
+   *                 Clears search results if query drops below MIN_SEARCH_LENGTH.
+   */
   const handleChange = useCallback(
     (event) => {
       const value = event.target.value;
@@ -75,6 +103,11 @@ const SearchBar = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
     [dispatch, isFavoritesTab],
   );
 
+  /**
+   * Clears the search input and cancels any pending debounce timer.
+   * Favorites tab → clears local filter query only.
+   * Other tabs    → clears both the query and the search results in Redux.
+   */
   const handleClear = useCallback(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (isFavoritesTab) {
@@ -85,6 +118,11 @@ const SearchBar = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
     }
   }, [dispatch, isFavoritesTab]);
 
+  /**
+   * Handles keyboard events on the search input.
+   * Only processes navigation keys (Escape, ArrowDown) when context is active.
+   * Typing keys are handled natively by the input element.
+   */
   const handleKeyDown = useCallback(
     (event) => {
       if (event.key === "Tab") {
@@ -112,6 +150,7 @@ const SearchBar = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
     [isActive, isReady, handleClear, setFocusContext],
   );
 
+  // Mouse click on the input activates the search context
   const handleClick = useCallback(() => {
     setFocusContext("search");
   }, [setFocusContext]);
@@ -153,6 +192,8 @@ const SearchBar = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
           spellCheck={false}
         />
 
+        {/* tabIndex={-1} — Tab key is disabled globally, this prevents */}
+        {/* the clear button from being reachable via Tab. */}
         {searchQuery && (
           <button
             className={styles.clearButton}
