@@ -15,9 +15,21 @@ import styles from "./Pagination.module.css";
 // Guard: ignores keypresses for COOLDOWN_MS after becoming active.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Maximum number of page buttons shown at once — ellipsis used beyond this
 const MAX_VISIBLE_PAGES = 7;
+
+// Cooldown window after context switch — must match all other context-aware components
 const COOLDOWN_MS = 300;
 
+/**
+ * Builds the visible page range array with ellipsis placeholders.
+ * Always includes first and last page, with up to MAX_VISIBLE_PAGES shown.
+ * Ellipsis ('...') is inserted where pages are skipped.
+ * Example: [1, '...', 6, 7, 8, '...', 500]
+ * @param {number} currentPage  - Currently active page
+ * @param {number} totalPages   - Total number of pages available
+ * @returns {Array<number|string>} - Array of page numbers and '...' placeholders
+ */
 const buildPageRange = (currentPage, totalPages) => {
   if (totalPages <= MAX_VISIBLE_PAGES) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -45,6 +57,8 @@ const buildPageRange = (currentPage, totalPages) => {
   return pages;
 };
 
+// memo() — prevents re-render when parent updates focusContext for other sections.
+// Pagination only needs to re-render when its own props change.
 const Pagination = memo(
   ({
     currentPage,
@@ -68,10 +82,19 @@ const Pagination = memo(
     const isFirst = currentPage === 1;
     const isLast = currentPage === totalPages;
 
+    /**
+     * Returns true if enough time has passed since the last context switch.
+     * Prevents queued keypresses from the previous context bleeding into pagination.
+     * @returns {boolean}
+     */
     const isReady = useCallback(() => {
       return Date.now() - (contextSwitchedAt?.current ?? 0) > COOLDOWN_MS;
     }, [contextSwitchedAt]);
 
+    /**
+     * Navigates to the previous page and activates pagination context.
+     * No-op if already on the first page.
+     */
     const handlePrev = useCallback(() => {
       if (!isFirst) {
         setFocusContext("pagination");
@@ -79,6 +102,10 @@ const Pagination = memo(
       }
     }, [isFirst, currentPage, onPageChange, setFocusContext]);
 
+    /**
+     * Navigates to the next page and activates pagination context.
+     * No-op if already on the last page.
+     */
     const handleNext = useCallback(() => {
       if (!isLast) {
         setFocusContext("pagination");
@@ -86,6 +113,12 @@ const Pagination = memo(
       }
     }, [isLast, currentPage, onPageChange, setFocusContext]);
 
+    /**
+     * Handles clicking a specific page number.
+     * Activates pagination context and triggers page fetch.
+     * Ignores ellipsis clicks (typeof check) and clicks on current page.
+     * @param {number|string} page - Page number or '...' ellipsis placeholder
+     */
     const handlePageClick = useCallback(
       (page) => {
         if (typeof page === "number" && page !== currentPage) {
@@ -97,6 +130,10 @@ const Pagination = memo(
     );
 
     // ─── Keyboard navigation ────────────────────────────────────────────────
+    // Registers a global keydown listener active only when focusContext === 'pagination'.
+    // Left/Right moves the highlight without fetching — Enter confirms and fetches.
+    // This prevents accidental page loads when browsing through page numbers.
+    // Cleanup removes the listener when dependencies change or component unmounts.
     useEffect(() => {
       const handleKeyDown = (event) => {
         if (event.key === "Tab") {
@@ -152,6 +189,7 @@ const Pagination = memo(
       setFocusContext,
     ]);
 
+    // No pagination needed for single-page results — render nothing
     if (totalPages <= 1) return null;
 
     return (
