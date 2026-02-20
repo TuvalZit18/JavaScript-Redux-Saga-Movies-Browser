@@ -2,15 +2,23 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  /* min-height - Critical! — without this, flex children ignore overflow
+     and the grid expands beyond the viewport */
   min-height: 0;
   overflow: hidden;
 }
 
 .gridArea {
   flex: 1;
+  /* min-height - Critical! — without this, flex children ignore overflow
+     and the grid expands beyond the viewport */
   min-height: 0;
+  /* Always show scrollbar track — prevents layout shift
+    when content changes between pages */
   overflow-y: scroll;
   overflow-x: hidden;
+  /* Ensures the focused card row has breathing room when
+     scrollIntoView() is called during keyboard navigation */
   scroll-padding-top: 20px;
   scroll-padding-bottom: 20px;
 }
