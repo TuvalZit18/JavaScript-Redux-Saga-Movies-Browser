@@ -5,13 +5,29 @@ import { addFavorite, removeFavorite } from "../../store/slices/favoritesSlice";
 import { getPosterUrl } from "../../api/tmdb";
 import styles from "./MovieCard.module.css";
 
+// Shown when TMDB poster_path is null or the image fails to load
 const FALLBACK_POSTER = "/placeholder-poster.svg";
+
+/**
+ * MovieCard
+ *
+ * Displays a single movie in the grid with poster, title, rating, and year.
+ * Action buttons (View Details, Favorite) appear on hover or keyboard focus.
+ *
+ * memo() — prevents re-render when unrelated grid cards update.
+ * Only re-renders when movie data, isFocused, or favorites state changes.
+ *
+ * @param {Object}  movie       - TMDB movie object
+ * @param {boolean} isFocused   - True when this card is the keyboard-focused card
+ * @param {number}  cardIndex   - Position in the grid (used for data-index attribute)
+ */
 
 const MovieCard = memo(({ movie, isFocused, cardIndex }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const favorites = useSelector((state) => state.favorites.items);
 
+  // ─── Derived display values — with fallbacks for missing API fields ───────
   const favorited = favorites.some((fav) => fav.id === movie.id);
   const releaseYear = movie.release_date
     ? new Date(movie.release_date).getFullYear()
@@ -22,10 +38,17 @@ const MovieCard = memo(({ movie, isFocused, cardIndex }) => {
       : "N/A";
   const posterUrl = getPosterUrl(movie.poster_path) ?? FALLBACK_POSTER;
 
+  /**
+   * Navigates to the movie detail page when the card is clicked.
+   */
   const handleCardClick = useCallback(() => {
     navigate(`/movie/${movie.id}`);
   }, [navigate, movie.id]);
 
+  /**
+   * Navigates to movie detail page from the eye button.
+   * stopPropagation — prevents the card click handler from also firing.
+   */
   const handleEyeClick = useCallback(
     (event) => {
       event.stopPropagation();
@@ -34,6 +57,11 @@ const MovieCard = memo(({ movie, isFocused, cardIndex }) => {
     [navigate, movie.id],
   );
 
+  /**
+   * Toggles the movie in/out of favorites.
+   * stopPropagation — prevents the card click handler from also firing.
+   * Dispatches to favoritesSlice which persists to localStorage.
+   */
   const handleFavoriteClick = useCallback(
     (event) => {
       event.stopPropagation();
@@ -46,6 +74,8 @@ const MovieCard = memo(({ movie, isFocused, cardIndex }) => {
     [dispatch, favorited, movie],
   );
 
+  // data-card — used by useKeyboardNavigation to query focused cards
+  // data-index — used for debugging and accessibility
   return (
     <article
       className={`${styles.card} ${isFocused ? styles.focused : ""}`}
