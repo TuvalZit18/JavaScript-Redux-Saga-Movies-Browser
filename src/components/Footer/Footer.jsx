@@ -1,16 +1,21 @@
 import React from "react";
 import styles from "./Footer.module.css";
 
-// ─────────────────────────────────────────────
-// Footer — Developer info & credits
-// Replace the placeholder values below with your own details
-// ─────────────────────────────────────────────
+/**
+ * Footer
+ *
+ * App footer — purely presentational, no logic or state.
+ * Three-column layout: branding left, TMDB credit center, links right.
+ * Fixed height defined by --footer-height CSS variable in index.css.
+ */
 const Footer = () => {
+  // Computed at render time so the copyright year never goes stale
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
+        {/* Left — app logo + developer credit */}
         <div className={styles.left}>
           <span className={styles.logoIcon}>✡</span>
           <span className={styles.logoText}>
@@ -22,7 +27,9 @@ const Footer = () => {
           </span>
         </div>
 
+        {/* Center — TMDB data attribution (required by TMDB API terms) */}
         <div className={styles.center}>
+          {/* TMDB attribution — required by TMDB API terms of service */}
           <span className={styles.powered}>
             Powered by{" "}
             <a
@@ -35,7 +42,7 @@ const Footer = () => {
             </a>
           </span>
         </div>
-
+        {/* Right — GitHub, LinkedIn links + copyright year */}
         <div className={styles.right}>
           <a
             href="https://github.com/TuvalZit18"
