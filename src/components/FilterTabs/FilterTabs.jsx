@@ -7,19 +7,7 @@ import {
 } from "../../store/slices/moviesSlice";
 import styles from "./FilterTabs.module.css";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FilterTabs
-//
-// Keyboard context (focusContext === 'tabs'):
-//   Left/Right → move highlight between tabs (2s delay to fetch)
-//   Enter      → confirm immediately
-//   ArrowUp    → go to search context
-//   ArrowDown  → go to grid context
-//
-// Guard: ignores keypresses for COOLDOWN_MS after becoming active
-// to prevent queued keypresses bleeding in from previous context.
-// ─────────────────────────────────────────────────────────────────────────────
-
+// Tab definitions — id must match Redux activeTab values in moviesSlice
 const TABS = [
   { id: "popular", label: "Popular", icon: "🔥" },
   { id: "airing", label: "Airing Now", icon: "📡" },
@@ -27,24 +15,59 @@ const TABS = [
 ];
 const COOLDOWN_MS = 300;
 
+// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * FilterTabs
+ *
+ * Category tab bar with a sliding bubble indicator.
+ * Keyboard context (focusContext === 'tabs'):
+ *   Left/Right → move highlight between tabs (2s delay before fetch)
+ *   Enter      → confirm highlighted tab and fetch immediately
+ *   ArrowUp    → exit to search context
+ *   ArrowDown  → exit to grid context
+ *
+ * Two fetch trigger modes (per task requirements):
+ *   Mouse click  → immediate fetch
+ *   Keyboard nav → 2 second delay, cancelled if user moves away before it fires
+ *
+ * Guard: ignores keypresses for COOLDOWN_MS after becoming active context
+ * to prevent queued keypresses bleeding in from the previous context.
+ *
+ * @param {string}          focusContext      - Current active keyboard context
+ * @param {Function}        setFocusContext   - Switches the active keyboard context
+ * @param {React.RefObject} contextSwitchedAt - Timestamp of last context switch (for cooldown guard)
+ */
+// ─────────────────────────────────────────────────────────────────────────────
 const FilterTabs = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
   const dispatch = useDispatch();
   const activeTab = useSelector((state) => state.movies.activeTab);
+
+  // Stores pending 2s fetch timers keyed by tab id.
+  // useRef — timer IDs don't need to trigger re-renders.
   const focusTimers = useRef({});
+
+  // DOM refs for each tab button — used to measure position for the slider animation
   const tabRefs = useRef({});
   const containerRef = useRef(null);
   const isActive = focusContext === "tabs";
 
+  // Keyboard-highlighted tab index — may differ from activeTab during navigation.
+  // Moves instantly on arrow keys; fetch fires after 2s or on Enter.
   const [highlightedIndex, setHighlightedIndex] = useState(
     TABS.findIndex((t) => t.id === activeTab),
   );
 
+  // Sync highlighted index when activeTab changes externally
+  // (e.g. tab switched programmatically from another component)
   useEffect(() => {
     setHighlightedIndex(TABS.findIndex((t) => t.id === activeTab));
   }, [activeTab]);
 
   const [sliderStyle, setSliderStyle] = useState({ left: 0, width: 0 });
 
+  // Recalculate slider position whenever the active tab changes.
+  // Measures the active tab's DOM position relative to the container
+  // and animates the bubble indicator to slide underneath it.
   useEffect(() => {
     const activeEl = tabRefs.current[activeTab];
     const containerEl = containerRef.current;
@@ -56,11 +79,20 @@ const FilterTabs = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
       width: tabRect.width,
     });
   }, [activeTab]);
-
+  /**
+   * Returns true if enough time has passed since the last context switch.
+   * Prevents queued keypresses from the previous context firing in this one.
+   * @returns {boolean}
+   */
   const isReady = useCallback(() => {
     return Date.now() - contextSwitchedAt.current > COOLDOWN_MS;
   }, [contextSwitchedAt]);
 
+  /**
+   * Sets the active tab in Redux and dispatches the appropriate fetch action.
+   * Favorites tab has no fetch — it displays locally stored data only.
+   * @param {string} tabId - Tab id: 'popular' | 'airing' | 'favorites'
+   */
   const dispatchTabFetch = useCallback(
     (tabId) => {
       dispatch(setActiveTab(tabId));
@@ -70,6 +102,11 @@ const FilterTabs = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
     [dispatch],
   );
 
+  /**
+   * Cancels all pending 2s fetch timers across all tabs.
+   * Called before every navigation action to prevent stale fetches
+   * from firing after the user has already moved to a different tab.
+   */
   const clearAllFocusTimers = useCallback(() => {
     Object.values(focusTimers.current).forEach(clearTimeout);
     focusTimers.current = {};
@@ -97,6 +134,7 @@ const FilterTabs = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
     [activeTab, dispatchTabFetch],
   );
 
+  // Mouse blur — cancel the 2s timer if the user moves away before it fires
   const handleBlur = useCallback((tabId) => {
     if (focusTimers.current[tabId]) {
       clearTimeout(focusTimers.current[tabId]);
@@ -105,6 +143,11 @@ const FilterTabs = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
   }, []);
 
   // ─── Keyboard navigation ──────────────────────────────────────────────────
+  // Global keydown listener — active only when focusContext === 'tabs'.
+  // Arrow keys move highlight and start a 2s fetch timer.
+  // Enter cancels the timer and fetches immediately.
+  // Vertical arrows transfer focus context to adjacent sections.
+  // Cleanup removes the listener when dependencies change or component unmounts.
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Tab") {
@@ -189,6 +232,8 @@ const FilterTabs = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
         className={`${styles.tabsContainer} ${isActive ? styles.sectionActive : ""}`}
         ref={containerRef}
       >
+        {/* Sliding bubble indicator — position and width driven by sliderStyle state.
+    Animates smoothly between tabs via CSS transition on left and width. */}
         <div
           className={styles.slider}
           style={{ left: sliderStyle.left, width: sliderStyle.width }}
