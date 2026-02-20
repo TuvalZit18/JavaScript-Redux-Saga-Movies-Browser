@@ -252,7 +252,7 @@ Get your free API key at [themoviedb.org/settings/api](https://www.themoviedb.or
 **Tuval Zitelbach**
 
 [![GitHub](https://img.shields.io/badge/GitHub-TuvalZit18-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TuvalZit18)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Tuval-Zitelbach-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/tuval-zitelbach)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Tuval--Zitelbach-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/tuval-zitelbach)
 
 ---
 
