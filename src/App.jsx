@@ -52,9 +52,13 @@ const PageLoader = () => (
 );
 
 const App = () => {
+  // App starts with focus on Filter Tabs — user can navigate immediately on load
   const [focusContext, setFocusContextRaw] = useState("tabs");
+  // useRef — not useState — so updating the timestamp never triggers a re-render.
   const contextSwitchedAt = useRef(Date.now());
 
+  /* Wraps the raw setter to always record the switch timestamp
+  Used by all context-aware components to guard against queued keypresses*/
   const setFocusContext = useCallback((newContext) => {
     contextSwitchedAt.current = Date.now();
     setFocusContextRaw(newContext);
@@ -72,10 +76,13 @@ const App = () => {
       <Header />
 
       <Routes>
+        {/* ── Home — Search + Tabs + Grid wrapped in a flex column page container ── */}
         <Route
           path="/"
           element={
             <div style={pageStyle}>
+              {/* SearchBar, FilterTabs share focusContext with HomePage
+                  so all three know which section owns keyboard input */}
               <SearchBar
                 focusContext={focusContext}
                 setFocusContext={setFocusContext}
@@ -86,6 +93,9 @@ const App = () => {
                 setFocusContext={setFocusContext}
                 contextSwitchedAt={contextSwitchedAt}
               />
+              {/* Suspense — shows PageLoader spinner while the lazy-loaded chunk downloads.
+                  HomePage and MovieDetailPage are loaded on-demand (lazy) to reduce
+                  the initial bundle size and speed up first paint. */}
               <Suspense fallback={<PageLoader />}>
                 <HomePage
                   focusContext={focusContext}
@@ -96,11 +106,13 @@ const App = () => {
             </div>
           }
         />
-
+        {/* ── Movie Detail — full page, no search/tabs, Escape key navigates back ── */}
         <Route
           path="/movie/:id"
           element={
             <div style={pageStyle}>
+              {/* Suspense — same pattern. MovieDetailPage is only downloaded when
+                  the user navigates to /movie/:id for the first time. */}
               <Suspense fallback={<PageLoader />}>
                 <MovieDetailPage />
               </Suspense>

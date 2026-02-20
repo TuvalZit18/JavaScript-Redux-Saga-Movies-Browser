@@ -1,3 +1,8 @@
+// ─── App Entry Point ──────────────────────────────────────────────────────
+// Bootstraps the React app with:
+//   - Redux store (Provider)
+//   - Client-side routing (BrowserRouter)
+// Global event guards are applied here so they cover the entire app lifetime.
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";

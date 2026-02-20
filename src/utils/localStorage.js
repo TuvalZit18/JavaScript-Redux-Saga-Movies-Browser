@@ -2,7 +2,7 @@
 // localStorage Utility — Favorites Persistence
 // ─────────────────────────────────────────────
 
-const FAVORITES_KEY = 'cineverse_favorites'
+const FAVORITES_KEY = "cineverse_favorites";
 
 /**
  * Load favorites array from localStorage.
@@ -11,14 +11,14 @@ const FAVORITES_KEY = 'cineverse_favorites'
  */
 export const loadFavorites = () => {
   try {
-    const serialized = localStorage.getItem(FAVORITES_KEY)
-    if (!serialized) return []
-    return JSON.parse(serialized)
+    const serialized = localStorage.getItem(FAVORITES_KEY);
+    if (!serialized) return [];
+    return JSON.parse(serialized);
   } catch {
     // Corrupted data — return clean slate
-    return []
+    return [];
   }
-}
+};
 
 /**
  * Save favorites array to localStorage.
@@ -26,18 +26,18 @@ export const loadFavorites = () => {
  */
 export const saveFavorites = (favorites) => {
   try {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites))
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
   } catch {
     // Storage might be full or unavailable — fail silently
-    console.warn('Could not save favorites to localStorage.')
+    console.warn("Could not save favorites to localStorage.");
   }
-}
+};
 
 /**
  * Check if a movie is in favorites by ID.
  * @param {Array}  favorites - Current favorites array
  * @param {number} movieId   - Movie ID to check
- * @returns {boolean}
+ * @returns {boolean} - true movie in favorites. false movie not in favorites.
  */
 export const isFavorite = (favorites, movieId) =>
-  favorites.some((movie) => movie.id === movieId)
+  favorites.some((movie) => movie.id === movieId);
