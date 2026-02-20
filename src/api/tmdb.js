@@ -1,10 +1,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// TMDB API Configuration
-//
-// To use this app, create a .env file in the project root and add:
-//   VITE_TMDB_API_KEY=your_actual_api_key_here
-//
-// Get a free API key at: https://www.themoviedb.org/settings/api
+/**
+ * TMDB API Configuration
+ *
+ * To use this app, create a .env file in the project root and add:
+ *   VITE_TMDB_API_KEY=your_actual_api_key_here
+ *
+ * Get a free API key at: https://www.themoviedb.org/settings/api
+ */
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Base URLs — not sensitive, no need to hide in .env
@@ -18,7 +20,15 @@ const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 // ─── Request timeout (ms) ───────────────────────────────────────────────────
 const REQUEST_TIMEOUT_MS = 8000;
 
-// ─── Generic fetch with timeout & error handling ────────────────────────────
+/**
+ * Generic fetch wrapper with timeout and error handling.
+ * ───────────────────────────────────────────────────
+ * Aborts the request if it exceeds timeoutMs via AbortController.
+ * @param {string} url           - Full request URL
+ * @param {number} [timeoutMs]   - Timeout in milliseconds (default: REQUEST_TIMEOUT_MS)
+ * @returns {Promise<Object>}    - Parsed JSON response
+ * @throws {Error}               - On timeout, non-OK HTTP status, or network failure
+ */
 const fetchWithTimeout = async (url, timeoutMs = REQUEST_TIMEOUT_MS) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -44,6 +54,13 @@ const fetchWithTimeout = async (url, timeoutMs = REQUEST_TIMEOUT_MS) => {
 };
 
 // ─── Build URL helper ────────────────────────────────────────────────────────
+/**
+ * Builds a full TMDB API URL with query parameters.
+ * Automatically appends the API key and language to every request.
+ * @param {string} endpoint      - TMDB API endpoint (e.g. '/movie/popular')
+ * @param {Object} [params={}]   - Additional query parameters to merge in
+ * @returns {string}             - Complete URL ready for fetch
+ */
 const buildUrl = (endpoint, params = {}) => {
   const queryParams = new URLSearchParams({
     api_key: API_KEY,
@@ -56,23 +73,27 @@ const buildUrl = (endpoint, params = {}) => {
 // ─── API Methods ─────────────────────────────────────────────────────────────
 
 /**
- * Fetch popular movies
- * @param {number} page - Page number (default: 1)
+ * Fetches the list of popular movies from TMDB.
+ * @param {number} [page=1]      - Page number (1-based, max 500)
+ * @returns {Promise<Object>}    - TMDB paginated response with results array
  */
 export const fetchPopularMovies = (page = 1) =>
   fetchWithTimeout(buildUrl("/movie/popular", { page }));
 
 /**
- * Fetch now playing (airing now) movies
- * @param {number} page - Page number (default: 1)
+ * Fetches movies currently playing in theaters (Airing Now).
+ * @param {number} [page=1]      - Page number (1-based, max 500)
+ * @returns {Promise<Object>}    - TMDB paginated response with results array
  */
 export const fetchAiringNowMovies = (page = 1) =>
   fetchWithTimeout(buildUrl("/movie/now_playing", { page }));
 
 /**
- * Search movies by query
- * @param {string} query - Search term
- * @param {number} page  - Page number (default: 1)
+ * Searches movies by title query string.
+ * Adult content is excluded via include_adult: false.
+ * @param {string} query         - Search term (minimum 2 characters enforced upstream)
+ * @param {number} [page=1]      - Page number (1-based, max 500)
+ * @returns {Promise<Object>}    - TMDB paginated response with results array
  */
 export const searchMovies = (query, page = 1) =>
   fetchWithTimeout(
@@ -80,8 +101,10 @@ export const searchMovies = (query, page = 1) =>
   );
 
 /**
- * Fetch full movie details by ID
- * @param {number} movieId - TMDB movie ID
+ * Fetches full movie details including credits and videos.
+ * append_to_response joins multiple endpoints in a single API call.
+ * @param {number} movieId       - TMDB movie ID
+ * @returns {Promise<Object>}    - Full movie object with genres, runtime, credits, videos
  */
 export const fetchMovieDetails = (movieId) =>
   fetchWithTimeout(
@@ -91,15 +114,19 @@ export const fetchMovieDetails = (movieId) =>
 // ─── Image URL helpers ───────────────────────────────────────────────────────
 
 /**
- * Get full poster URL or null if path is missing
- * @param {string|null} posterPath - TMDB poster path
+ * Builds the full poster image URL from a TMDB poster path.
+ * Uses IMAGE_BASE_URL (w500) for consistent card sizing.
+ * @param {string|null} posterPath   - TMDB relative poster path (e.g. '/abc123.jpg')
+ * @returns {string|null}            - Full image URL or null if path is missing
  */
 export const getPosterUrl = (posterPath) =>
   posterPath ? `${IMAGE_BASE_URL}${posterPath}` : null;
 
 /**
- * Get full backdrop URL or null if path is missing
- * @param {string|null} backdropPath - TMDB backdrop path
+ * Builds the full backdrop image URL from a TMDB backdrop path.
+ * Uses IMAGE_ORIGINAL for maximum quality on the detail page.
+ * @param {string|null} backdropPath - TMDB relative backdrop path
+ * @returns {string|null}            - Full image URL or null if path is missing
  */
 export const getBackdropUrl = (backdropPath) =>
   backdropPath ? `${IMAGE_ORIGINAL}${backdropPath}` : null;
