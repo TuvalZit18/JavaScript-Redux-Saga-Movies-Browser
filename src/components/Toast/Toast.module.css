@@ -1,0 +1,68 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Toast.module.css
+   Styles for the non-blocking toast notification.
+   Positioned fixed at bottom-center, slides up on mount.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.toast {
+  position: fixed;
+  bottom: var(--spacing-2xl);
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-subtle);
+  backdrop-filter: blur(12px);
+
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  white-space: nowrap;
+
+  /* Slide up from bottom on mount */
+  animation: slideUp 0.25s ease-out;
+
+  /* Sit above everything including the detail page content */
+  z-index: 100;
+}
+
+/* ─── Info variant — used for boundary messages ─── */
+.info {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: rgba(0, 212, 255, 0.3);
+  color: var(--color-text-primary);
+  box-shadow: 0 4px 24px rgba(0, 212, 255, 0.15);
+}
+
+/* ─── Warning variant — used for hard limits (first/last) ─── */
+.warning {
+  background: rgba(255, 180, 0, 0.1);
+  border-color: rgba(255, 180, 0, 0.3);
+  color: var(--color-text-primary);
+  box-shadow: 0 4px 24px rgba(255, 180, 0, 0.15);
+}
+
+.icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.message {
+  color: var(--color-text-primary);
+}
+
+/* ─── Slide up animation ─── */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

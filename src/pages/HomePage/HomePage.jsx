@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MovieGrid from "../../components/MovieGrid/MovieGrid";
 import Pagination from "../../components/Pagination/Pagination";
@@ -34,8 +35,19 @@ const FAVORITES_ITEMS_PER_PAGE = 20;
 // Matches the minimum in SearchBar and moviesSaga — kept here as a single source of truth
 const MIN_SEARCH_LENGTH = 2;
 
+/**
+ * HomePage
+ *
+ * @param {string}          focusContext      - Current active keyboard context
+ * @param {Function}        setFocusContext   - Switches the active keyboard context
+ * @param {React.RefObject} contextSwitchedAt - Timestamp of last context switch (for cooldown guard)
+ */
 const HomePage = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
   const dispatch = useDispatch();
+
+  // useLocation gives access to the current URL including query string.
+  // Used on mount to restore the correct page when navigating back from MovieDetailPage.
+  const location = useLocation();
 
   // ─── Redux State ───────────────────────────────────────────────────────────
   const activeTab = useSelector((state) => state.movies.activeTab);
@@ -54,10 +66,16 @@ const HomePage = ({ focusContext, setFocusContext, contextSwitchedAt }) => {
   const isApiSearching = searchQuery.length >= MIN_SEARCH_LENGTH;
 
   // ─── Initial Fetch ─────────────────────────────────────────────────────────
-  // Fetch popular movies once on mount — Popular is the default tab on app start.
-  // No cleanup needed — fetchPopularRequest is idempotent.
+  // Reads ?page from the URL query string on mount.
+  // When navigating back from MovieDetailPage, the URL is /?page=N — this
+  // ensures the grid restores to the correct page rather than always page 1.
+  // If no ?page param is present (normal app load), defaults to page 1.
+  // deps array intentionally omits location — this should only run on mount.
   useEffect(() => {
-    dispatch(fetchPopularRequest({ page: 1 }));
+    const params = new URLSearchParams(location.search);
+    const pageFromUrl = parseInt(params.get("page"), 10);
+    const page = pageFromUrl > 0 ? pageFromUrl : 1;
+    dispatch(fetchPopularRequest({ page }));
   }, [dispatch]);
 
   // ─── Derive Display Data ───────────────────────────────────────────────────
