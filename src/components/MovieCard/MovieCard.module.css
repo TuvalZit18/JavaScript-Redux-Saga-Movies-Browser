@@ -16,12 +16,32 @@
   min-width: 0; /* Prevent overflow */
 }
 
-.card:hover,
+/* ─── Hover disabled state ───────────────────────────────────────────────────
+   Applied by MovieGrid to all non-focused cards when focusContext === 'grid'.
+   Must be declared explicitly so CSS Modules exports it as a valid class name. */
+.hoverDisabled {
+  pointer-events: auto; /* class must exist — suppression is done via :not() below */
+}
+
+/* ─── Hover — mouse only, weaker effect ─────────────────────────────────────
+   .hoverDisabled is applied by MovieGrid when focusContext === 'grid',
+   completely suppressing hover so mouse movement never interrupts keyboard nav.
+   Hover is intentionally weaker than focus (smaller glow + scale). ─────────── */
+.card:hover:not(.focused):not(.hoverDisabled) {
+  border-color: var(--color-border-active);
+  box-shadow: var(--glow-sm), var(--shadow-card);
+  transform: scale(1.02);
+  z-index: 2;
+}
+
+/* ─── Focused — keyboard selected, always stronger than hover ────────────────
+   Bigger glow (glow-md vs glow-sm), bigger scale (1.04 vs 1.02),
+   higher z-index (3 vs 2) — focus is always the dominant visual state. ────── */
 .card.focused {
   border-color: var(--color-border-active);
   box-shadow: var(--glow-md), var(--shadow-card);
   transform: scale(1.04);
-  z-index: 2;
+  z-index: 3;
 }
 
 /* ─── Poster — overflow hidden scoped here only ─── */
@@ -42,7 +62,11 @@
   transition: transform var(--transition-slow);
 }
 
-.card:hover .poster,
+/* Poster zoom — disabled when grid is active (.hoverDisabled) */
+.card:hover:not(.focused):not(.hoverDisabled) .poster {
+  transform: scale(1.02);
+}
+
 .card.focused .poster {
   transform: scale(1.04);
 }
@@ -64,7 +88,9 @@
   z-index: 10;
 }
 
-.card:hover .actions,
+/* Actions visible on hover (mouse) or keyboard focus.
+   Hover only triggers when .hoverDisabled is absent (grid not active). */
+.card:hover:not(.focused):not(.hoverDisabled) .actions,
 .card.focused .actions,
 .actionsVisible {
   opacity: 1;
@@ -130,6 +156,73 @@
 
 .actionBtn:hover::after {
   opacity: 1;
+}
+
+/* ─── Hover Overlay Preview ─── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 11, 24, 0.82);
+  backdrop-filter: blur(2px);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--spacing-md);
+  gap: var(--spacing-sm);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  z-index: 5;
+  pointer-events: none; /* Don't block clicks */
+}
+
+.card:hover .overlay,
+.card.focused .overlay {
+  opacity: 1;
+}
+
+.overlayTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.overlayOverview {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  /* Clamp to 4 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.overlayMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-top: auto;
+}
+
+.overlayBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent);
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+}
+
+.overlayRating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: #ffd700;
 }
 
 /* ─── Info Section ─── */
